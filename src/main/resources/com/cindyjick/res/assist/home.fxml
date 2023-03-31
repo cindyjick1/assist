@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+<BorderPane prefHeight="400.0" prefWidth="600.0" stylesheets="@css/home.css"
+            xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.cindyjick.res.assist.controller.HomeController">
+    <top>
+        <MenuBar>
+            <menus>
+                <Menu mnemonicParsing="false" text="File">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="Close"/>
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Edit">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="Delete"/>
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="About"/>
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+    </top>
+    <center>
+        <TabPane stylesheets="@css/navigation.css" tabClosingPolicy="ALL_TABS">
+            <Tab closable="false" text="导航主页">
+                <BorderPane styleClass="main-content">
+                    <top>
+                        <BorderPane>
+                            <padding>
+                                <Insets top="10" bottom="10" left="20" right="20"/>
+                            </padding>
+                            <left>
+                                <ComboBox fx:id="searchType">
+                                </ComboBox>
+                            </left>
+                            <center>
+                                <TextField fx:id="searchContent"/>
+                            </center>
+                            <right>
+                                <Button fx:id="searchButton"  mnemonicParsing="false" styleClass="search-icon"/>
+                            </right>
+                        </BorderPane>
+                    </top>
+                    <center>
+                        <TableView>
+
+                        </TableView>
+                    </center>
+                </BorderPane>
+            </Tab>
+        </TabPane>
+    </center>
+    <bottom>
+        <BorderPane styleClass="fast-search">
+            <center>
+                <TextField/>
+            </center>
+            <right>
+                <Button mnemonicParsing="false" styleClass="search-icon"/>
+            </right>
+            <bottom>
+                <FlowPane hgap="20">
+                    <Text>Size:None</Text>
+                    <Text>Music:赤伶</Text>
+                    <Text text="Lyrics:位卑无忘国忧">Lyrics:位卑无忘国忧</Text>
+                    <padding>
+                        <Insets left="10.0" right="10.0"/>
+                    </padding>
+                </FlowPane>
+            </bottom>
+        </BorderPane>
+    </bottom>
+</BorderPane>
