@@ -1,0 +1,7 @@
+.background {
+    -fx-background-image: url("../image/navigation/girl.jpg");
+    -fx-background-size: contain;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center center;
+    -fx-background-color: pink;
+}

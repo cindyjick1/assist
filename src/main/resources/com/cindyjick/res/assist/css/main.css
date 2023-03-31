@@ -1,0 +1,10 @@
+.fast-search {
+    -fx-background-color: yellow;
+}
+
+.search-icon {
+    -fx-background-image: url('../image/main/search.png');
+    -fx-background-size: contain;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center center;
+}
