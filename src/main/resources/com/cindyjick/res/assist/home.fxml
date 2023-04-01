@@ -50,9 +50,14 @@
                         </BorderPane>
                     </top>
                     <center>
-                        <TableView>
-
-                        </TableView>
+                        <BorderPane>
+                            <padding>
+                                <Insets right="20" left="20" bottom="10"/>
+                            </padding>
+                            <center>
+                                <TableView fx:id="searchResult"/>
+                            </center>
+                        </BorderPane>
                     </center>
                 </BorderPane>
             </Tab>
