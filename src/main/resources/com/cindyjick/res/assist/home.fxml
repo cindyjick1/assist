@@ -2,7 +2,8 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.text.Text?>
 <BorderPane prefHeight="400.0" prefWidth="600.0" stylesheets="@css/home.css"
             xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1"
@@ -29,38 +30,9 @@
         </MenuBar>
     </top>
     <center>
-        <TabPane stylesheets="@css/navigation.css" tabClosingPolicy="ALL_TABS">
-            <Tab closable="false" text="导航主页">
-                <BorderPane styleClass="main-content">
-                    <top>
-                        <BorderPane>
-                            <padding>
-                                <Insets top="10" bottom="10" left="20" right="20"/>
-                            </padding>
-                            <left>
-                                <ComboBox fx:id="searchType">
-                                </ComboBox>
-                            </left>
-                            <center>
-                                <TextField fx:id="searchContent"/>
-                            </center>
-                            <right>
-                                <Button fx:id="searchButton"  mnemonicParsing="false" styleClass="search-icon"/>
-                            </right>
-                        </BorderPane>
-                    </top>
-                    <center>
-                        <BorderPane>
-                            <padding>
-                                <Insets right="20" left="20" bottom="10"/>
-                            </padding>
-                            <center>
-                                <TableView fx:id="searchResult">
-                                </TableView>
-                            </center>
-                        </BorderPane>
-                    </center>
-                </BorderPane>
+        <TabPane tabClosingPolicy="ALL_TABS" fx:id="tabs">
+            <Tab closable="false" text="导航主页" fx:id="navigationTab">
+                <fx:include source="controller/navigation.fxml" fx:id="navigation"/>
             </Tab>
         </TabPane>
     </center>
