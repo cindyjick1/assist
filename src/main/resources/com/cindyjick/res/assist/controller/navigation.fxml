@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml" stylesheets="@../css/navigation.css" styleClass="main-content"
+            fx:controller="com.cindyjick.res.assist.controller.NavigationController">
+    <top>
+        <BorderPane>
+            <padding>
+                <Insets top="10" bottom="10" left="20" right="20"/>
+            </padding>
+            <left>
+                <ComboBox fx:id="searchType">
+                </ComboBox>
+            </left>
+            <center>
+                <TextField fx:id="searchContent"/>
+            </center>
+            <right>
+                <Button fx:id="searchButton" mnemonicParsing="false" styleClass="search-icon"/>
+            </right>
+        </BorderPane>
+    </top>
+    <center>
+        <BorderPane>
+            <padding>
+                <Insets right="20" left="20" bottom="10"/>
+            </padding>
+            <center>
+                <TableView fx:id="searchResult">
+                </TableView>
+            </center>
+        </BorderPane>
+    </center>
+</BorderPane>
