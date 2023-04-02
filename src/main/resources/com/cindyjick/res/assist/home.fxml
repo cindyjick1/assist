@@ -55,7 +55,8 @@
                                 <Insets right="20" left="20" bottom="10"/>
                             </padding>
                             <center>
-                                <TableView fx:id="searchResult"/>
+                                <TableView fx:id="searchResult">
+                                </TableView>
                             </center>
                         </BorderPane>
                     </center>

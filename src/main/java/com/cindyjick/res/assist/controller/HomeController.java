@@ -29,20 +29,20 @@ public class HomeController {
 
     @SneakyThrows
     public HomeController() {
-        this.properties = new Properties();
         var resource = Optional.ofNullable(getClass().getClassLoader().getResource("home.properties")).orElseThrow(() -> new RuntimeException("load home.properties fail"));
+        this.properties = new Properties();
         this.properties.load(new BufferedReader(new FileReader(resource.getFile(), StandardCharsets.UTF_8)));
     }
 
     @FXML
     public void initialize() {
-        bindComboBoxItems();
+        bindSearchType();
         bindSearchContent();
         bindSearchButton();
         initSearchResult();
     }
 
-    private void bindComboBoxItems() {
+    private void bindSearchType() {
         this.searchType.getItems().addAll(StringUtils.split(StringUtils.defaultIfBlank(this.properties.getProperty("search-type"), "All"), ","));
         this.searchType.getSelectionModel().selectFirst();
     }
@@ -62,10 +62,10 @@ public class HomeController {
 
     @SuppressWarnings("unchecked")
     private void initSearchResult() {
-        TableColumn<String, String> strategyCode = new TableColumn<>("StrategyCode");
-        TableColumn<String, String> strategyDesc = new TableColumn<>("StrategyDesc");
-        TableColumn<String, Number> strategyVersion = new TableColumn<>("StrategyVersion");
-        TableColumn<String, String> operation = new TableColumn<>("Operation");
+        var strategyCode = new TableColumn<String, String>("StrategyCode");
+        var strategyDesc = new TableColumn<String, String>("StrategyDesc");
+        var strategyVersion = new TableColumn<String, Number>("StrategyVersion");
+        var strategyOperation = new TableColumn<String, String>("StrategyOperation");
         strategyCode.setCellValueFactory(item -> {
             System.out.println("strategyCode cell value " + item);
             return new SimpleStringProperty(item.getValue());
@@ -78,12 +78,31 @@ public class HomeController {
             System.out.println("strategyVersion cell value " + item);
             return new SimpleIntegerProperty(1);
         });
-        operation.setCellFactory(item -> new StrategyOperationCell<>());
+        strategyOperation.setCellValueFactory(item -> {
+            System.out.println("strategyOperation cell value " + item);
+            return new SimpleStringProperty(item.getValue());
+        });
+        strategyOperation.setCellFactory(item -> new StrategyOperationCell<>() {
+            @Override
+            protected void initButton() {
+                this.detailButton.setText("detail");
+                this.editButton.setText("edit");
+            }
+
+            @Override
+            protected void bindDataOnUpdateItem(String item, boolean rowEmpty) {
+                this.detailButton.setOnMouseClicked(event -> System.out.println("click detail button, item:" + item));
+                this.editButton.setOnMouseClicked(event -> System.out.println("click edit button, item:" + item));
+            }
+        });
+        strategyOperation.setEditable(true);
+        this.searchResult.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        this.searchResult.setEditable(true);
         this.searchResult.getColumns().setAll(
                 strategyCode,
                 strategyDesc,
                 strategyVersion,
-                operation
+                strategyOperation
         );
         searchResultHideOrShow(true);
     }
