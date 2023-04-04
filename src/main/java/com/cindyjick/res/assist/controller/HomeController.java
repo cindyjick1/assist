@@ -38,7 +38,10 @@ public class HomeController {
         final int start = 1;
         final int endIndex = tabItems.size() - 1;
         switch (Objects.requireNonNull(operation)) {
-            case ADD -> tabItems.add(Objects.requireNonNull(tab));
+            case ADD -> {
+                tabItems.add(Objects.requireNonNull(tab));
+                this.tabs.getSelectionModel().select(tab);
+            }
             case REMOVE -> Optional.of(tab)
                     .map(tabItems::indexOf)
                     .filter(e -> NumberUtil.inRange(e, start, endIndex))
