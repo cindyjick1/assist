@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.AnchorPane?>
-<AnchorPane xmlns="http://javafx.com/javafx"
+<ScrollPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.cindyjick.res.assist.controller.StrategyController"
-            prefHeight="400.0" prefWidth="600.0">
+            fx:controller="com.cindyjick.res.assist.controller.StrategyController" stylesheets="../css/strategy.css">
+    <content>
+        <AnchorPane fx:id="strategyPane" prefWidth="700" prefHeight="700" styleClass="strategy-pane">
 
-</AnchorPane>
+        </AnchorPane>
+    </content>
+</ScrollPane>

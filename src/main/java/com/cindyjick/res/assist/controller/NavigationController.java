@@ -103,7 +103,8 @@ public class NavigationController {
                 this.detailButton.setOnMouseClicked(event -> {
                     System.out.println("click detail button, item:" + item);
                     // TODO: jump to strategy detail tab
-                    homeController.setTabs(HomeController.TabOperation.ADD, loadStrategyTab(item));
+                    Tab tab = loadStrategyTab(item);
+                    homeController.setTabs(HomeController.TabOperation.ADD, tab);
                 });
                 this.editButton.setOnMouseClicked(event -> System.out.println("click edit button, item:" + item));
             }

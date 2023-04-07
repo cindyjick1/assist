@@ -41,6 +41,7 @@ public class HomeController {
             case ADD -> {
                 tabItems.add(Objects.requireNonNull(tab));
                 this.tabs.getSelectionModel().select(tab);
+                this.tabs.requestFocus();
             }
             case REMOVE -> Optional.of(tab)
                     .map(tabItems::indexOf)
