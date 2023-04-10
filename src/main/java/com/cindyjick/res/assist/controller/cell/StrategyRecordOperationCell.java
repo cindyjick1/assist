@@ -4,12 +4,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableCell;
 import javafx.scene.layout.HBox;
 
-public abstract class StrategyOperationCell<S, T> extends TableCell<S, T> {
+public abstract class StrategyRecordOperationCell<S, T> extends TableCell<S, T> {
     private final HBox hBox;
     protected final Button detailButton;
     protected final Button editButton;
 
-    public StrategyOperationCell() {
+    public StrategyRecordOperationCell() {
         this.detailButton = new Button("detail");
         this.editButton = new Button("edit");
         initButton();

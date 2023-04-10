@@ -1,6 +1,7 @@
 package com.cindyjick.res.assist.controller;
 
-import com.cindyjick.res.assist.controller.cell.StrategyOperationCell;
+import com.cindyjick.res.assist.controller.cell.StrategyRecordOperationCell;
+import com.cindyjick.res.assist.enu.TabOperation;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -11,7 +12,7 @@ import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -33,7 +34,9 @@ public class NavigationController {
     public NavigationController() {
         var resource = Optional.ofNullable(getClass().getClassLoader().getResource("navigation.properties")).orElseThrow(() -> new RuntimeException("load navigation.properties fail"));
         this.properties = new Properties();
-        this.properties.load(new BufferedReader(new FileReader(resource.getFile(), StandardCharsets.UTF_8)));
+        try (var input = resource.openStream()) {
+            this.properties.load(new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8)));
+        }
     }
 
     @FXML
@@ -91,7 +94,7 @@ public class NavigationController {
             System.out.println("strategyOperation cell value " + item);
             return new SimpleStringProperty(item.getValue());
         });
-        strategyOperation.setCellFactory(item -> new StrategyOperationCell<>() {
+        strategyOperation.setCellFactory(item -> new StrategyRecordOperationCell<>() {
             @Override
             protected void initButton() {
                 this.detailButton.setText("detail");
@@ -104,7 +107,7 @@ public class NavigationController {
                     System.out.println("click detail button, item:" + item);
                     // TODO: jump to strategy detail tab
                     Tab tab = loadStrategyTab(item);
-                    homeController.setTabs(HomeController.TabOperation.ADD, tab);
+                    homeController.setTabs(TabOperation.ADD, tab);
                 });
                 this.editButton.setOnMouseClicked(event -> System.out.println("click edit button, item:" + item));
             }
@@ -133,7 +136,7 @@ public class NavigationController {
         FXMLLoader fxmlLoader = new FXMLLoader(Objects.requireNonNull(this.getClass().getResource("strategy.fxml")));
         var tab = new Tab(strategyCode, fxmlLoader.load());
         var contextMenu = new ContextMenu();
-        contextMenu.getItems().setAll(Arrays.stream(HomeController.TabOperation.values()).filter(e -> !HomeController.TabOperation.ADD.equals(e)).map(e -> {
+        contextMenu.getItems().setAll(Arrays.stream(TabOperation.values()).filter(e -> !TabOperation.ADD.equals(e)).map(e -> {
             var menu = new MenuItem(e.getDesc());
             menu.setOnAction(event -> homeController.setTabs(e, tab));
             return menu;

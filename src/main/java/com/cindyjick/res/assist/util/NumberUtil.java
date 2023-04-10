@@ -2,7 +2,10 @@ package com.cindyjick.res.assist.util;
 
 import java.util.Optional;
 
-public class NumberUtil {
+public final class NumberUtil {
+    private NumberUtil() {
+    }
+
     /**
      * judge source is in range
      *

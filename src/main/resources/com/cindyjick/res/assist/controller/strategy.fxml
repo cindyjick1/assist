@@ -4,10 +4,9 @@
 <?import javafx.scene.layout.AnchorPane?>
 <ScrollPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.cindyjick.res.assist.controller.StrategyController" stylesheets="../css/strategy.css">
+            fx:controller="com.cindyjick.res.assist.controller.StrategyController" stylesheets="@../css/strategy.css">
     <content>
-        <AnchorPane fx:id="strategyPane" prefWidth="700" prefHeight="700" styleClass="strategy-pane">
-
+        <AnchorPane fx:id="strategyPane" prefWidth="400" prefHeight="400" styleClass="strategy-pane">
         </AnchorPane>
     </content>
 </ScrollPane>

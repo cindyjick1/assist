@@ -1,21 +1,36 @@
 package com.cindyjick.res.assist.controller;
 
+import com.cindyjick.res.assist.model.OutputDegree;
+import com.cindyjick.res.assist.model.Params;
+import com.cindyjick.res.assist.model.Strategy;
+import com.cindyjick.res.assist.model.StrategyNode;
+import com.cindyjick.res.assist.util.StrategyNodeUtil;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Predicate;
 
+@Slf4j
 public class StrategyController {
     @FXML
     private AnchorPane strategyPane;
-    private List<Button> nodes;
+    private Map<String, StrategyRectangle> nodes;
     private List<Line> lines;
     private Strategy strategy;
+    private Canvas canvas;
+    private GraphicsContext gc;
 
     public StrategyController(Strategy strategy) {
         this.strategy = strategy;
@@ -23,134 +38,120 @@ public class StrategyController {
 
     public StrategyController() {
         // TODO: remove mock data
+        log.info("create strategy controller, instance:{}", this);
         var startNode = new StrategyNode("start", "开始", 250, 50);
         var node1 = new StrategyNode("node1", "节点1", 250, 100);
         var node2 = new StrategyNode("node2", "节点2", 250, 150);
         var end = new StrategyNode("end", "结束", 250, 200);
         this.strategy = new Strategy(new Params(List.of("a", "b", "c")), Map.of(
-                startNode.nodeCode, startNode,
-                node1.nodeCode, node1,
-                node2.nodeCode, node2,
-                end.nodeCode, end));
-
+                startNode.getNodeCode().get(), startNode,
+                node1.getNodeCode().get(), node1,
+                node2.getNodeCode().get(), node2,
+                end.getNodeCode().get(), end));
     }
 
     @FXML
     public void initialize() {
-        System.out.println("pane x:" + this.strategyPane.getLayoutX() + ",pane y:" + this.strategyPane.getLayoutY());
+        bindCanvas();
         bindStrategy(this.strategy);
-        this.strategyPane.getChildren().setAll(this.nodes);
+
+    }
+
+    private void bindCanvas() {
+        this.canvas = new Canvas(250, 250);
+        this.gc = this.canvas.getGraphicsContext2D();
+        this.gc.setFill(Color.BLUE);
+        this.gc.fillRect(75, 75, 100, 100);
+        this.strategyPane.getChildren().add(this.canvas);
+    }
+
+    public static class StrategyRectangle extends Rectangle {
+        private double anchorX;
+        private double anchorY;
+        private StringProperty code;
+        private StrategyNode strategyNode;
+
+        public StrategyRectangle() {
+            super();
+        }
+
+        public StrategyRectangle(double width, double height, Paint fill) {
+            super(width, height, fill);
+            this.code = new SimpleStringProperty();
+        }
+
+        public void recordAnchor(double x, double y) {
+            this.anchorX = x;
+            this.anchorY = y;
+        }
+
+        public void bindStrategyNode(@NonNull StrategyNode node) {
+            Optional.of(node).ifPresent(e -> {
+                this.strategyNode = node;
+                this.code.bindBidirectional(node.getNodeCode());
+                this.layoutXProperty().bindBidirectional(node.getX());
+                this.layoutYProperty().bindBidirectional(node.getY());
+            });
+        }
+
+        public void unbindStrategyNode(@NonNull StrategyNode node) {
+            Optional.of(node).ifPresent(e -> {
+                this.strategyNode = null;
+                this.code.unbindBidirectional(node.getNodeCode());
+                this.layoutXProperty().unbindBidirectional(node.getX());
+                this.layoutYProperty().unbindBidirectional(node.getY());
+            });
+        }
+    }
+
+    private void bindStrategy(@NonNull Strategy strategy) {
+        clear();
+        this.strategy = strategy;
+        // 可视化节点
+        if (MapUtils.isNotEmpty(strategy.getNodes())) {
+            strategy.getNodes().forEach((k, v) -> {
+                var node = new StrategyRectangle(30, 30, Color.PINK);
+                // 绑定节点
+                node.bindStrategyNode(v);
+                node.setOnMousePressed(event -> node.recordAnchor(event.getSceneX(), event.getSceneY()));
+                node.setOnMouseDragged(event -> {
+                    node.setTranslateX(event.getSceneX() - node.anchorX);
+                    node.setTranslateY(event.getSceneY() - node.anchorY);
+                });
+                node.setOnMouseReleased(event -> {
+                    node.setLayoutX(node.getLayoutX() + node.getTranslateX());
+                    node.setLayoutY(node.getLayoutY() + node.getTranslateY());
+                    node.setTranslateX(0);
+                    node.setTranslateY(0);
+                });
+                nodes.put(k, node);
+            });
+        }
+        // 可视化边
+        if (MapUtils.isNotEmpty(strategy.getOutputDegree())) {
+            strategy.getOutputDegree().forEach((k, v) -> {
+                if (CollectionUtils.isEmpty(v)) {
+                    return;
+                }
+                for (OutputDegree outputDegree : v) {
+                    lines.add(initLine(nodes.get(k), nodes.get(outputDegree.getNode().getNodeCode().get())));
+                }
+            });
+        }
+        this.strategyPane.getChildren().addAll(this.nodes.values());
         this.strategyPane.getChildren().addAll(this.lines);
     }
 
-    static class DragButton extends Button {
-        private double anchorX;
-        private double anchorY;
-
-        public DragButton(String text) {
-            super(text);
-        }
-
-        public DragButton(String text, Node graphic) {
-            super(text, graphic);
-        }
-
-        public DragButton setAnchorXY(double x, double y) {
-            this.anchorX = x;
-            this.anchorY = y;
-            return this;
-        }
-
-        public double getDiffX(double x) {
-            return x - this.anchorX;
-        }
-
-        public double getDiffY(double y) {
-            return y - this.anchorY;
-        }
-    }
-
-    private void bindStrategy(Strategy strategy) {
-        clear();
-        this.strategy = strategy;
-        // 绑定节点
-        Optional.ofNullable(strategy.nodes).orElse(new ConcurrentHashMap<>()).forEach((k, v) -> {
-            DragButton button = new DragButton(k);
-            button.setLayoutX(v.x);
-            button.setLayoutY(v.y);
-            button.setPrefWidth(60);
-            button.setPrefHeight(40);
-            button.setOnMousePressed(event -> {
-                button.setAnchorXY(event.getSceneX(), event.getSceneY());
-            });
-            button.setOnMouseDragged(event -> {
-                button.setTranslateX(button.getDiffX(event.getSceneX()));
-                button.setTranslateY(button.getDiffY(event.getSceneY()));
-            });
-            button.setOnMouseReleased(event -> {
-                button.setLayoutX(button.getLayoutX() + button.getTranslateX());
-                button.setLayoutY(button.getLayoutY() + button.getTranslateY());
-                button.setTranslateX(0);
-                button.setTranslateY(0);
-            });
-            nodes.add(button);
-        });
-        // 绑定边
+    private Line initLine(@NonNull StrategyRectangle start, @NonNull StrategyRectangle end) {
+        return StrategyNodeUtil.initLine(start, end);
     }
 
     private void clear() {
-        this.nodes = new LinkedList<>();
-        this.lines = new ArrayList<>();
+        Optional.ofNullable(this.nodes).ifPresent(e -> this.strategyPane.getChildren().removeAll(e.values()));
+        Optional.ofNullable(this.lines).ifPresent(e -> this.strategyPane.getChildren().removeAll(e));
         this.strategy = null;
-        this.strategyPane.getChildren().clear();
+        this.nodes = new HashMap<>();
+        this.lines = new ArrayList<>();
     }
 
-
-    public static class Params {
-        public static final String CONTEXT = "Context";
-        private final Map<String, Class<?>> param;
-        private final Map<String, LinkedList<String>> source;
-
-        public Params(List<String> varCodeList) {
-            this.param = new ConcurrentHashMap<>();
-            this.source = new ConcurrentHashMap<>();
-            Optional.ofNullable(varCodeList).ifPresent(e -> e.forEach(f -> {
-                param.put(f, String.class);
-                source.computeIfAbsent(f, k -> new LinkedList<>()).add(CONTEXT);
-            }));
-        }
-    }
-
-    public static class StrategyNode {
-        private String nodeCode;
-        private String nodeDesc;
-        private double x;
-        private double y;
-
-        public StrategyNode(String nodeCode, String nodeDesc, double x, double y) {
-            this.nodeCode = nodeCode;
-            this.nodeDesc = nodeDesc;
-            this.x = x;
-            this.y = y;
-        }
-    }
-
-    public static class Strategy {
-        private Params params;
-        private Map<String, StrategyNode> nodes;
-        private StrategyNode startNode;
-        private Map<String, StrategyNode> endNodes;
-        private Map<String, List<OutputDegree>> outputDegree;
-        private Map<String, List<StrategyNode>> inputDegree;
-
-        public Strategy(Params params, Map<String, StrategyNode> nodes) {
-            this.params = params;
-            this.nodes = nodes;
-        }
-    }
-
-    public static class OutputDegree {
-        private StrategyNode node;
-        private Predicate<Params> predicate;
-    }
 }

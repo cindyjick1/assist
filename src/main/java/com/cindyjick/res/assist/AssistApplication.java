@@ -5,9 +5,13 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+
 public class AssistApplication extends Application {
 
     public static void main(String[] args) {
+        LogManager.getLogManager().getLogger("").setLevel(Level.ALL);
         launch(args);
     }
 
